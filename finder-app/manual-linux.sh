@@ -56,6 +56,25 @@ fi
 
 echo "Adding the Image in outdir"
 
+echo "Searching for kernel image under ${BUILD_DIR}"
+
+# Possible kernel image names (ordered by preference)
+KERNEL_IMAGE=$(find "${BUILD_DIR}/arch" -type f \
+    \( -name "Image" -o -name "zImage" -o -name "bzImage" \) \
+    | head -n 1)
+
+if [ -z "$KERNEL_IMAGE" ]; then
+    echo "ERROR: No kernel image found!"
+    exit 1
+fi
+
+echo "Found kernel image: ${KERNEL_IMAGE}"
+
+# Copy to OUTDIR
+cp "${KERNEL_IMAGE}" "${OUTDIR}/"
+
+echo "Kernel image copied to ${OUTDIR}/$(basename "${KERNEL_IMAGE}")"
+
 echo "Creating the staging directory for the root filesystem"
 cd "$OUTDIR"
 if [ -d "${OUTDIR}/rootfs" ]
